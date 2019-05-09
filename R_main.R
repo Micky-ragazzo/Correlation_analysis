@@ -13,17 +13,17 @@ library(mgcv)
 #   psycho::standardize() 
 #visualize distribution
 #----------------------------------
-# z_df_choose %>% 
-#        dplyr::select(-input_DMC, -MD1_ANLIEF_MG, -Wuchtvers_anz, R_SH, -MD2_ANLIEF_G) %>% 
-#        gather(Variable, Value) %>% 
-#        ggplot(aes(x=Value, fill=Variable)) +
-#        geom_density(alpha=0.4) +
-#        geom_vline(aes(xintercept=0)) +
-#        theme_light() +
-#        scale_fill_brewer(palette="Spectral")
+z_df_choose %>%
+       dplyr::select(-input_DMC, -MD1_ANLIEF_MG, -Wuchtvers_anz, R_SH, -MD2_ANLIEF_G) %>%
+       gather(Variable, Value) %>%
+       ggplot(aes(x=Value, fill=Variable)) +
+       geom_density(alpha=0.4) +
+       geom_vline(aes(xintercept=0)) +
+       theme_light() +
+       scale_fill_brewer(palette="Spectral")
 #----------------------------------
 #normalization data
-#data.frame(z_schaft) -> z_schaft
+data.frame(z_schaft) -> z_schaft
 #----------------------------------------------
 #unshowing boxplot
 bstats <- boxplot(count ~ spray, data = data, col = "lightgray") 
@@ -32,11 +32,21 @@ bstats$out <- NULL
 bstats$group <- NULL
 bxp(bstats)  # this will plot without any outlier points
 #linear approach model z_df - RS 
+#replace comma with dots
+clean_data_klein_schaft$MD1_ANLIEF_MG <- scan(text=clean_data_klein_schaft$MD1_ANLIEF_MG, dec=",", sep=".")
+clean_data_klein_schaft$MD2_ANLIEF_MG <- scan(text=clean_data_klein_schaft$MD2_ANLIEF_MG, dec=",", sep=".")
+#excluding column 
+z_schaft <- select(clean_data_klein_schaft, -DMC, -id, -PSN, -DATUM, -input_DMC, -max_date)
+#corr. 
+ggpairs(data=z_schaft, columns=3:7, title="trees data")
+
 lm_mod <- lm(R_SH ~ Wuchtvers_anz, data = df)
- termplot(lm_mod, partial.resid = TRUE, se = TRUE)
+termplot(lm_mod, partial.resid = TRUE, se = TRUE)
 
 #linear approach model z_schaft
  lm_mod <- lm(Final_2 ~ Wuchtvers_anz, data = z_schaft)
  termplot(lm_mod, partial.resid = TRUE, se = TRUE)
  
- 
+#non-linear approach
+gam_mod <- gam(Final_1 ~ s(Wuchtvers_anz, k=2), data = z_schaft)
+plot(gam_mod, residuals = TRUE, pch = 1)

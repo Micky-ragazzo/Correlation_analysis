@@ -80,8 +80,44 @@ ggplot(z_df, aes(x=Wuchtvers_anz, y=R_SH)) +
     geom_smooth(method=lm, se=FALSE, fullrange=TRUE, color='#2C3E50')
 ```
 
+Creating non-linear models to desribe and find pattern: 
 
+DEnsity - We frequently encounter the situation where we would like to understand how a particular variable is distributed in a dataset.
 
+Linear approach 
+<b>1. Finds the best parametric model to fit your data. It is hard to describe a model (which must describe all possible data points) without using a parametric distribution.
+</b>
+<b>
+But for a model, each data point falls around the function that describes the model. In fact, the data points are distributed around the function (as you know).
+</b>
+<b>
+Likelihood describes the chance that a given model caused the observation that has come to pass. It reasons from observation to model. For this reason, likelihood is sometimes called inverse probability.
+Although likelihood and probability both deal with chances they behave differently mathematically. Most notably, the probability of disjoint events must sum to one. Not so for likelihoods.
+</b>
+```{r}
+lm_mod <- lm(R_SH ~ Wuchtvers_anz, data = df)
+termplot(lm_mod, partial.resid = TRUE, se = TRUE)
+```
+```{r}
+ggpairs(data=z_schaft, columns=3:7, title="trees data")
+```
+```{r}
+ggpairs(data=df, columns=1:4, title="trees data")
+
+```
+
+When we 
+```{r}
+gam_mod <- gam(Final_2 ~ s(Wuchtvers_anz, k=1), data = z_schaft)
+plot(gam_mod, residuals = TRUE, pch = 1)
+```
+```{r}
+gam_mod <- gam(Wuchtvers_anz ~ s(Final_1), data = z_schaft)
+plot(gam_mod, residuals = TRUE, pch = 1)
+```
+```{r}
+ggpairs(data=df, columns=1:3, title="trees data")
+```
 
 
 df
